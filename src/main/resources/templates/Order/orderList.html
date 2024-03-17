@@ -5,6 +5,11 @@
 <div class="container">
   <div th:replace="fragments/bodyHeader :: bodyHeader"/>
   <div>
+    <div><button type="button" class="btn btn-primary"
+                 th:onclick="|location.href='@{/items(memberId=${memberId})}'|">목록으로</button></div>
+
+
+
     <div>
       <form th:object="${orderSearch}" class="form-inline">
         <div class="form-group mb-2">
