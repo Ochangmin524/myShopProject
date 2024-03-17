@@ -62,6 +62,7 @@ public class LoginController {
 
         //관리자 페이지
         if (loginMember.getLoginId().equals("admin")) {
+            log.info("관리자 로그인");
             return "home/adminHome";
         }
         log.info("리다이렉트");

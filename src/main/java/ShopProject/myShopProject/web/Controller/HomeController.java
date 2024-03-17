@@ -23,6 +23,11 @@ public class HomeController {
         if (loginMember == null) {
             return "home/home";
         }
+
+        if (loginMember.getLoginId().equals("admin")) {
+            log.info("관리자 로그인");
+            return "home/adminHome";
+        }
         //로그인한 회원이면 loginHome 으로
         model.addAttribute(loginMember);
         return "home/loginHome";
