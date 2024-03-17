@@ -31,17 +31,27 @@ public class ItemController {
         return "items/createItemForm";
     }
 
-
     //지금은 book이지만 item으로 바꿀 필요 있으며, 로직 수정해야함
     @PostMapping(value = "/items/new")
-    public String create(ItemForm form) {
+    public String create(ItemForm form, Model model)  {
         createAndJoin(form);
-        return "redirect:/items";
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
+        return "items/admin/adminItemList";
     }
 
+    @GetMapping(value = "items/adminItemList")
+    private String adminItemList(Model model) {
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
+        return "items/admin/adminItemList";
+    }
+
+
     private void createAndJoin(ItemForm form) {
+
         String category = form.getCategory();
-        if(category.equals("Book")){
+        if (category.equals("Book")) {
             //도서 객체 생성
             Book book = new Book();
             book.setName(form.getName());
@@ -49,14 +59,14 @@ public class ItemController {
             book.setStockQuantity(form.getStockQuantity());
             itemService.saveItem(book);
         }
-        if(category.equals("Album")){
+        if (category.equals("Album")) {
             Album album = new Album();
             album.setName(form.getName());
             album.setPrice(form.getPrice());
             album.setStockQuantity(form.getStockQuantity());
             itemService.saveItem(album);
         }
-        if(category.equals("Movie")){
+        if (category.equals("Movie")) {
             Movie movie = new Movie();
             movie.setName(form.getName());
             movie.setPrice(form.getPrice());
@@ -65,14 +75,7 @@ public class ItemController {
         }
     }
 
-    private void extracted(Long itemId, List<Category> categories) {
-        Book book = new Book();
-        book.setId(itemId);
-        Category Book = new Category();
-        Book.setName("Book");
-        categories.add(Book);
-        itemService.saveItem(book);
-    }
+
 
 
     //아이템 상세 정보
@@ -80,8 +83,6 @@ public class ItemController {
     public String itemDetail(@RequestParam("itemId") Long itemId,
                              @RequestParam("memberId") Long memberId,
     Model model) {
-
-
         Item item = itemService.findOne(itemId);
         Member member = memberService.findOne(memberId);
         model.addAttribute("item", item);
@@ -89,6 +90,14 @@ public class ItemController {
         return "items/item";
 
     }
+
+    @GetMapping("/admin/item")
+    public String AdminItemDetail(@RequestParam("itemId") Long itemId,Model model){
+        Item item = itemService.findOne(itemId);
+        model.addAttribute("item", item);
+        return "items/admin/adminItem";
+    }
+
     //상품 목록
     //여기에 맴버 id가 pathvariable로 들어온다.
     @GetMapping(value = "/items")
@@ -104,9 +113,10 @@ public class ItemController {
 
 
     // 상품 수정 폼 접근
-    @GetMapping(value = "items/{itemId}/edit")
-    public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
+    @GetMapping(value = "/items/{itemId}/edit")
+    public String updateItemForm(@RequestParam("itemId") Long itemId, Model model) {
         ItemForm form = new ItemForm();
+        log.info("a;dlfasdfjsa = "+itemId);
         Book item = (Book) itemService.findOne(itemId);
         form.setId(item.getId());
         form.setName(item.getName());
@@ -120,9 +130,9 @@ public class ItemController {
 
     //날라오는 bookform은 준영속객체체
    @PostMapping(value = "/items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") ItemForm form, @PathVariable("itemId") Long itemId) {
+    public String updateItem(@ModelAttribute("form") ItemForm form, @RequestParam("itemId") Long itemId) {
        itemService.updateItem(itemId, form.getName(),form.getPrice(), form.getStockQuantity());
-       return "redirect:/items";
+       return "redirect:/items/adminItemList";
     }
 
 
