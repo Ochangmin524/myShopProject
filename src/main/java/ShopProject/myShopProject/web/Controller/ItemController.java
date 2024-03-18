@@ -5,11 +5,14 @@ import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.ItemForm;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,13 +30,17 @@ public class ItemController {
     public String createForm(Model model) {
         ItemForm itemForm = new ItemForm();
         itemForm.setCategoriesMap(categoryInit());
-        model.addAttribute("form", itemForm);
+        model.addAttribute("itemForm", itemForm);
         return "items/createItemForm";
     }
 
     //지금은 book이지만 item으로 바꿀 필요 있으며, 로직 수정해야함
     @PostMapping(value = "/items/new")
-    public String create(ItemForm form, Model model)  {
+    public String create(@Valid ItemForm form, BindingResult bindingResult, Model model)  {
+        if (bindingResult.hasErrors()) {
+            return "items/createItemForm";
+        }
+
         createAndJoin(form);
         List<Item> items = itemService.findItems();
         model.addAttribute("items", items);
@@ -53,6 +60,7 @@ public class ItemController {
         String category = form.getCategory();
         if (category.equals("Book")) {
             //도서 객체 생성
+            log.info("도서 객체 생성");
             Book book = new Book();
             book.setName(form.getName());
             book.setPrice(form.getPrice());
@@ -60,6 +68,8 @@ public class ItemController {
             itemService.saveItem(book);
         }
         if (category.equals("Album")) {
+            log.info("앨범 객체 생성");
+
             Album album = new Album();
             album.setName(form.getName());
             album.setPrice(form.getPrice());
@@ -67,6 +77,8 @@ public class ItemController {
             itemService.saveItem(album);
         }
         if (category.equals("Movie")) {
+            log.info("영화 객체 생성");
+
             Movie movie = new Movie();
             movie.setName(form.getName());
             movie.setPrice(form.getPrice());
@@ -116,7 +128,7 @@ public class ItemController {
     @GetMapping(value = "/items/{itemId}/edit")
     public String updateItemForm(@RequestParam("itemId") Long itemId, Model model) {
         ItemForm form = new ItemForm();
-        log.info("a;dlfasdfjsa = "+itemId);
+
         Book item = (Book) itemService.findOne(itemId);
         form.setId(item.getId());
         form.setName(item.getName());

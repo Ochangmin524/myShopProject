@@ -43,6 +43,17 @@ public class OrderController {
         return "order/orderForm";
     }
 
+
+    @GetMapping(value = "/admin/order")
+    public String getAdminOrderForm(Model model){
+        List<Member> members = memberService.findAll();
+        List<Item> items = itemService.findItems();
+        model.addAttribute("members", members);
+        model.addAttribute("items", items);
+
+        return "order/adminOrderForm";
+    }
+
     @PostMapping(value = "/order")
     public String order(
 //                         @RequestParam("memberId") Long memberId,

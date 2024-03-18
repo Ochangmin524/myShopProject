@@ -24,7 +24,7 @@ public class ItemForm {
     private int stockQuantity;
 
     private Map<String, String> categoriesMap = new LinkedHashMap<>();
-
+    @NotEmpty
     private String category;
     private String author;
     private String isbn;
