@@ -5,7 +5,9 @@ import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.ItemForm;
+import ShopProject.myShopProject.web.Form.editItemForm;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -36,7 +38,7 @@ public class ItemController {
 
     //지금은 book이지만 item으로 바꿀 필요 있으며, 로직 수정해야함
     @PostMapping(value = "/items/new")
-    public String create(@Valid ItemForm form, BindingResult bindingResult, Model model)  {
+    public String create(@Valid ItemForm form, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "items/createItemForm";
         }
@@ -88,13 +90,11 @@ public class ItemController {
     }
 
 
-
-
     //아이템 상세 정보
     @GetMapping("item")
     public String itemDetail(@RequestParam("itemId") Long itemId,
                              @RequestParam("memberId") Long memberId,
-    Model model) {
+                             Model model) {
         Item item = itemService.findOne(itemId);
         Member member = memberService.findOne(memberId);
         model.addAttribute("item", item);
@@ -104,7 +104,7 @@ public class ItemController {
     }
 
     @GetMapping("/admin/item")
-    public String AdminItemDetail(@RequestParam("itemId") Long itemId,Model model){
+    public String AdminItemDetail(@RequestParam("itemId") Long itemId, Model model) {
         Item item = itemService.findOne(itemId);
         model.addAttribute("item", item);
         return "items/admin/adminItem";
@@ -123,11 +123,10 @@ public class ItemController {
     }
 
 
-
     // 상품 수정 폼 접근
     @GetMapping(value = "/items/{itemId}/edit")
     public String updateItemForm(@RequestParam("itemId") Long itemId, Model model) {
-        ItemForm form = new ItemForm();
+        editItemForm form = new editItemForm();
 
         Book item = (Book) itemService.findOne(itemId);
         form.setId(item.getId());
@@ -141,10 +140,16 @@ public class ItemController {
     }
 
     //날라오는 bookform은 준영속객체체
-   @PostMapping(value = "/items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") ItemForm form, @RequestParam("itemId") Long itemId) {
-       itemService.updateItem(itemId, form.getName(),form.getPrice(), form.getStockQuantity());
-       return "redirect:/items/adminItemList";
+    @PostMapping(value = "/items/{itemId}/edit")
+    public String updateItem(@Valid @ModelAttribute("form") editItemForm form, BindingResult bindingResult,
+                             @RequestParam("itemId") Long itemId) {
+
+        if (bindingResult.hasErrors()) {
+            log.info("문제 발생");
+            return "items/updateItemForm";
+        }
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        return "redirect:/items/adminItemList";
     }
 
 
