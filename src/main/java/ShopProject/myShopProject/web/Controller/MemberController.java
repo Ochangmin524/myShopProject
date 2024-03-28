@@ -1,6 +1,5 @@
 package ShopProject.myShopProject.web.Controller;
 
-import ShopProject.myShopProject.Domain.Address;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.MemberForm;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -45,12 +45,7 @@ public class MemberController {
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
-        Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
-        Member member = new Member();
-        member.setAddress(address);
-        member.setName(form.getName());
-        member.setLoginId(form.getLoginId());
-        member.setPassword(form.getPassword());
+        Member member = memberService.createMember(form);
         Long loginMemberId = memberService.join(member);
 
         if (loginMemberId == null) {
@@ -59,4 +54,6 @@ public class MemberController {
         }
         return "redirect:/";
     }
+
+
 }

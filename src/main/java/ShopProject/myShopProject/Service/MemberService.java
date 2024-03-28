@@ -1,7 +1,9 @@
 package ShopProject.myShopProject.Service;
 
+import ShopProject.myShopProject.Domain.Address;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Repository.MemberRepository;
+import ShopProject.myShopProject.web.Form.MemberForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,22 @@ public class MemberService {
         if(isLoginIdDuplicate(member)){
             return null;
         }
-
         memberRepository.save(member);
         return member.getId();
     }
 
+
+    //폼으로 맴버 생성
+    @Transactional
+    public  Member createMember(MemberForm form) {
+        Address address = new Address(form.getCity(), form.getStreet(), form.getZipcode());
+        Member member = new Member();
+        member.setAddress(address);
+        member.setName(form.getName());
+        member.setLoginId(form.getLoginId());
+        member.setPassword(form.getPassword());
+        return member;
+    }
     // id 중복이면 true 반환
     private boolean isLoginIdDuplicate(Member member) {
         Optional<Member> findMembers = memberRepository.findByLoginId(member.getLoginId());
@@ -35,6 +48,9 @@ public class MemberService {
         }
         return false;
     }
+
+
+
 
 
     //하나만 조회

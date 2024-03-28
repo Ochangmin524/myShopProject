@@ -32,6 +32,7 @@ public class OrderRepository {
 
     //검색 조건에 동적으로 쿼리를 생성해서 주문 엔티티를 조회한다. OrderSearch에 조건들이 담겨 있다.
     //JPA Criteria로 처리
+    // 스프링 querydsl로 개선 가능
     //아직 이해하지 못함
 
     public List<Order> findAllByString(OrderSearch orderSearch) {
