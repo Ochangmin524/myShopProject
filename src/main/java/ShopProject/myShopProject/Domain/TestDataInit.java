@@ -1,79 +1,103 @@
 package ShopProject.myShopProject.Domain;
 
-import ShopProject.myShopProject.Domain.Item.Album;
 import ShopProject.myShopProject.Domain.Item.Book;
-import ShopProject.myShopProject.Service.ItemService;
-import ShopProject.myShopProject.Service.MemberService;
-import ShopProject.myShopProject.Service.OrderService;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import ShopProject.myShopProject.Domain.Order.Order;
+import ShopProject.myShopProject.Domain.Order.OrderItem;
 
-@Slf4j
+import ShopProject.myShopProject.Repository.OrderRepository;
+import ShopProject.myShopProject.api.dto.OrderDto;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class TestDataInit {
-    private  Long id = 1L;
+    private final InitService initService;
 
-    private final ItemService itemService;
-    private final MemberService memberService;
-    private final OrderService orderService;
     @PostConstruct
     public void init() {
-        log.info("초기 등록 시작");
-        //아이템 등록
-        Book book = new Book();
-        book.setPrice(10000);
-        book.setName("testBook");
-        book.setStockQuantity(100);
-        book.setAuthor("작가");
-        book.setIsbn("isbn");
-
-        Album album = new Album();
-        album.setPrice(20000);
-        album.setName("testAlbum");
-        album.setStockQuantity(2000);
-        album.setArtist("아티스트");
-        album.setEtc("ETC");
-        //사용자 등록
-        Address address = new Address("서울","거리", "zipcoded");
-
-        Member member = createTestMember();
-        Member member2 = createTestMember();
-
-        itemService.saveItem(book);
-        itemService.saveItem(album);
-        memberService.join(member);
-        memberService.join(member2);
-
-
-        Member admin = new Member();
-        admin.setLoginId("admin");
-        admin.setPassword("a");
-        admin.setName("관리자");
-        admin.setAddress(address);
-        memberService.join(admin);
-
-        //사용자 주문 등록
-        orderService.order(1L, 1L, 2);
-        orderService.order(1L, 2L, 2);
-
-        orderService.order(2L, 1L, 3);
-
+        initService.dbInit1();
+        initService.dbInit2();
     }
 
-    public Member createTestMember() {
-        Address address = new Address("서울"+id,"거리"+id, "zipcoded"+id);
-        Member member = new Member();
-        member.setLoginId("test"+id);
-        member.setPassword("test"+id);
-        member.setName("이름입니다"+id);
-        member.setAddress(address);
 
-        this.id += 1;
-        return member;
 
+
+
+
+
+
+    //orderItem 과 item이 한번씩의 쿼리로 1: 1: 1로 접근 가능하다 기존의 1:n:m 보다 빠르다.
+    @Component
+    @Transactional
+    @RequiredArgsConstructor
+    static class InitService {
+        private Long id = 1L;
+        private final EntityManager em;
+
+        public void dbInit1() {
+            Member member = createMember();
+            em.persist(member);
+            Book book1 = createBook("JPA1 BOOK", 10000, 100);
+            em.persist(book1);
+            Book book2 = createBook("JPA2 BOOK", 20000, 100);
+            em.persist(book2);
+            OrderItem orderItem1 = OrderItem.createOrderItem(book1, 10000, 1);
+            OrderItem orderItem2 = OrderItem.createOrderItem(book2, 20000, 2);
+            Order order = Order.createOrder(member, createDelivery(member),
+                    orderItem1, orderItem2);
+            em.persist(order);
+        }
+
+        public void dbInit2() {
+            Member member = createMember();
+            em.persist(member);
+            Book book1 = createBook("SPRING1 BOOK", 20000, 200);
+            em.persist(book1);
+            Book book2 = createBook("SPRING2 BOOK", 40000, 300);
+            em.persist(book2);
+            Delivery delivery = createDelivery(member);
+            OrderItem orderItem1 = OrderItem.createOrderItem(book1, 20000, 3);
+            OrderItem orderItem2 = OrderItem.createOrderItem(book2, 40000, 4);
+            Order order = Order.createOrder(member, delivery, orderItem1,
+                    orderItem2);
+            em.persist(order);
+        }
+
+        private Delivery createDelivery(Member member) {
+            Delivery delivery = new Delivery();
+            delivery.setAddress(member.getAddress());
+            return delivery;
+        }
+
+        private Book createBook(String name, int price, int stockQuantity) {
+            Book book = new Book();
+            book.setName(name);
+            book.setPrice(price);
+            book.setStockQuantity(stockQuantity);
+            return book;
+        }
+
+        private Member createMember() {
+            Address address = new Address("서울" + id, "거리" + id, "zipcoded" + id);
+            Member member = new Member();
+            member.setLoginId("test" + id);
+            member.setPassword("test" + id);
+            member.setName("이름입니다" + id);
+            member.setAddress(address);
+
+            this.id += 1;
+            return member;
+
+
+        }
     }
-
 }
+

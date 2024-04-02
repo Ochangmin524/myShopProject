@@ -8,6 +8,8 @@ import ShopProject.myShopProject.api.dto.createMemberRequest;
 import ShopProject.myShopProject.api.dto.createMemberResponse;
 import ShopProject.myShopProject.api.dto.Result;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
+    // 맴버 회원 가입 요청을 dto로 받아들이고, 반환결과인 id를 dto로 반환한다.
     @PostMapping("/api/members")
     public createMemberResponse saveMember(@RequestBody
                                            @Valid createMemberRequest request) {
@@ -32,6 +35,8 @@ public class MemberApiController {
         Long id = memberService.join(member);
         return new createMemberResponse(id);
     }
+
+    // 맴버 조회 요청을 dto로 받아들이고, 반환 결과인 id를 dto로 반환한다.
     @GetMapping("/api/members")
     public Result getmembers() {
         List<Member> memberList = memberService.findAll();
@@ -43,6 +48,13 @@ public class MemberApiController {
 
 
         return new Result(collect);
+    }
+
+    //
+    @GetMapping("/api/members/{id}")
+    public MemberDto getmemberById(@PathVariable("id") Long request) {
+        Member findMember = memberService.findOne(request);
+        return new MemberDto(findMember.getLoginId(), findMember.getPassword(), findMember.getName(), findMember.getAddress());
     }
 
 

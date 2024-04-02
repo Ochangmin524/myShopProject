@@ -10,8 +10,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 10
+
   tymeleaf:
     prefix: classpath:/templates/
     suffix: .html
 logging.level:
   org.hibernate.SQL: debug
+  org.hibernate.type: trace
