@@ -43,6 +43,7 @@ public class ItemController {
             return "items/createItemForm";
         }
 
+
         createAndJoin(form);
         List<Item> items = itemService.findItems();
         model.addAttribute("items", items);
@@ -59,6 +60,8 @@ public class ItemController {
 
     private void createAndJoin(ItemForm form) {
 
+
+
         String category = form.getCategory();
         if (category.equals("Book")) {
             //도서 객체 생성
@@ -66,6 +69,8 @@ public class ItemController {
             Book book = new Book();
             book.setName(form.getName());
             book.setPrice(form.getPrice());
+            book.setAuthor(form.getAuthor());
+            book.setIsbn(form.getIsbn());
             book.setStockQuantity(form.getStockQuantity());
             itemService.saveItem(book);
         }
@@ -75,6 +80,8 @@ public class ItemController {
             Album album = new Album();
             album.setName(form.getName());
             album.setPrice(form.getPrice());
+            album.setEtc(form.getEtc());;
+            album.setArtist(form.getArtist());
             album.setStockQuantity(form.getStockQuantity());
             itemService.saveItem(album);
         }
@@ -83,6 +90,8 @@ public class ItemController {
 
             Movie movie = new Movie();
             movie.setName(form.getName());
+            movie.setDirector(form.getDirector());
+            movie.setActor(form.getActor());
             movie.setPrice(form.getPrice());
             movie.setStockQuantity(form.getStockQuantity());
             itemService.saveItem(movie);

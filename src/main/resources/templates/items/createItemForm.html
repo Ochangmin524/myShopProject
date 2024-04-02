@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 
-
-
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
@@ -12,8 +10,8 @@
 
             <label th:for="name">상품명</label>
             <input type="text" th:field="*{name}" class="form-control"
-                    placeholder="이름을 입력하세요"
-                    th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
+                   placeholder="이름을 입력하세요"
+                   th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
             <p th:if="${#fields.hasErrors('name')}"
                th:errors="*{name}">Incorrect date</p>
 
@@ -28,26 +26,26 @@
             <input type="number" th:field="*{stockQuantity}" class="formcontrol" placeholder="수량을 입력하세요">
         </div>
 
-
-
         <div>
             <div>상품 카테고리</div>
-            <select th:field="*{category}" class="form-select" >
+            <select id="categorySelect" name="category" th:onchange="|loadSubOptions(this.value)|">
                 <option value="">==상품 카테고리 선택==</option>
-                <option th:each="category : ${categoriesMap}" th:value="${category.key}"
-                        th:text="${category.value}"></option>
+                <option value="Book">책</option>
+                <option value="Album">앨범</option>
+                <option value="Movie">영화</option>
             </select>
-            <div class="field-error" th:errors="*{category}" />
-
         </div>
 
+        <div id="subOptionsDiv">
+            <!-- 하위 선택 옵션들이 여기에 동적으로 추가됩니다. -->
+        </div>
 
-        <div class="form-group">
+        <div class="form-group" id="authorField" style="display: none;">
             <label th:for="author">저자</label>
             <input type="text" th:field="*{author}" class="form-control"
                    placeholder="저자를 입력하세요">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="isbnField" style="display: none;">
             <label th:for="isbn">ISBN</label>
             <input type="text" th:field="*{isbn}" class="form-control"
                    placeholder="ISBN을 입력하세요">
@@ -57,6 +55,41 @@
     <br/>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+
+<script th:inline="javascript">
+    function loadSubOptions(category) {
+        var subOptionsDiv = document.getElementById("subOptionsDiv");
+
+        // 하위 선택 옵션들 초기화
+        subOptionsDiv.innerHTML = "";
+
+        // 선택한 카테고리에 따라 하위 선택 옵션들을 추가
+        if (category === "Album") {
+            var html = '<div class="form-group">' +
+                       '<label for="artist">작곡가</label>' +
+                       '<input type="text" id="artist" name="artist" class="form-control" placeholder="작곡가를 입력하세요">' +
+                       '<label for="etc">기타</label>' +
+                       '<input type="text" id="etc" name="etc" class="form-control" placeholder="기타를 입력하세요">' +
+                       '</div>';
+            subOptionsDiv.insertAdjacentHTML('beforeend', html);
+            document.getElementById("authorField").style.display = "none";
+            document.getElementById("isbnField").style.display = "none";
+        } else if (category === "Movie") {
+            var html = '<div class="form-group">' +
+                       '<label for="director">감독</label>' +
+                       '<input type="text" id="director" name="director" class="form-control" placeholder="감독을 입력하세요">' +
+                       '<label for="actor">배우</label>' +
+                       '<input type="text" id="actor" name="actor" class="form-control" placeholder="배우를 입력하세요">' +
+                       '</div>';
+            subOptionsDiv.insertAdjacentHTML('beforeend', html);
+            document.getElementById("authorField").style.display = "none";
+            document.getElementById("isbnField").style.display = "none";
+        } else if (category === "Book") {
+            document.getElementById("authorField").style.display = "block";
+            document.getElementById("isbnField").style.display = "block";
+        }
+    }
+</script>
 </body>
 
 </html>
