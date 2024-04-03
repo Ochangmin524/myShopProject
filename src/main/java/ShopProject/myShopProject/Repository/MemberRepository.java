@@ -32,6 +32,12 @@ public class MemberRepository {
                  .getResultList();
     }
 
+    //회원 탈퇴
+    public void removeMember(Member member) {
+        em.remove(em.contains(member) ? member : em.merge(member));
+    }
+
+
     //회원 로그인ID로 찾기
     public  Optional<Member> findByLoginId(String loginId) {
         return findAll().stream()

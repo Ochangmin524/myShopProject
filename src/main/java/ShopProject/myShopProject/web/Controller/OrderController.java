@@ -55,11 +55,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "/order")
-    public String order(
-//                         @RequestParam("memberId") Long memberId,
-//                        @RequestParam("itemId") Long itemId,
-//                        @RequestParam("count") int count,
-                        @ModelAttribute("orderForm") OrderForm orderForm,
+    public String order(@ModelAttribute("orderForm") OrderForm orderForm,
                         BindingResult bindingResult,
                         RedirectAttributes re,
                         Model model) {

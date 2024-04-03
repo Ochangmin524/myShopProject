@@ -23,7 +23,7 @@ public class Member {
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
     @NotEmpty

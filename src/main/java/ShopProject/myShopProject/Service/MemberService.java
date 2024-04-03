@@ -28,7 +28,10 @@ public class MemberService {
         return member.getId();
     }
 
-
+    @Transactional
+    public void removeMember(Member member) {
+        memberRepository.removeMember(member);
+    }
     //폼으로 맴버 생성
     @Transactional
     public  Member createMember(MemberForm form) {

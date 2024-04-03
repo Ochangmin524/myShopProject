@@ -59,9 +59,6 @@ public class ItemController {
 
 
     private void createAndJoin(ItemForm form) {
-
-
-
         String category = form.getCategory();
         if (category.equals("Book")) {
             //도서 객체 생성

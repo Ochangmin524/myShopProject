@@ -3,6 +3,9 @@ package ShopProject.myShopProject.web.Controller;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.MemberForm;
+import ShopProject.myShopProject.web.SessionConst;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
@@ -32,7 +36,16 @@ public class MemberController {
         return "members/memberList";
     }
 
-    //회원 가입 접근
+    //회원 탈퇴
+    @PostMapping(value = "/member/withdraw")
+    public String removeMember(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false)
+                                     Member loginMember, HttpServletRequest request) {
+        memberService.removeMember(loginMember);
+        HttpSession session = request.getSession();
+        session.invalidate();
+        return "redirect:/";
+    }
+
     @GetMapping(value = "/members/new")
     public String createForm(Model model) {
         model.addAttribute("memberForm", new MemberForm());

@@ -26,6 +26,13 @@
             <a class="btn btn-lg btn-info" href="/orders">주문 내역</a>
         </p>
     </div>
+
+        <form th:action="@{/logout}" method="post">
+        <button class="w-100 btn btn-dark btn-lg" type="submit">
+            로그아웃
+        </button>
+    </form>
+
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
 </body>
