@@ -13,9 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,12 +36,19 @@ public class MemberController {
 
     //회원 탈퇴
     @PostMapping(value = "/member/withdraw")
-    public String removeMember(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false)
-                                     Member loginMember, HttpServletRequest request) {
+    public String removeMember(@RequestParam("memberId") Long memberId ,HttpServletRequest request) {
+        Member loginMember = memberService.findOne(memberId);
         memberService.removeMember(loginMember);
         HttpSession session = request.getSession();
         session.invalidate();
         return "redirect:/";
+    }
+    // 관리자 회원 탈퇴
+    @PostMapping(value = "/member/admin/withdraw")
+    public String adminRemoveMember(@RequestParam("memberId") Long memberId) {
+        Member findMember = memberService.findOne(memberId);
+        memberService.removeMember(findMember);
+        return "redirect:/members";
     }
 
     @GetMapping(value = "/members/new")
@@ -52,9 +57,11 @@ public class MemberController {
         return "members/createMemberForm";
     }
 
+
     //회원 가입 처리
     @PostMapping(value = "/members/new")
     public String create(@Valid MemberForm form, BindingResult result) {
+
         if (result.hasErrors()) {
             return "members/createMemberForm";
         }
@@ -62,7 +69,7 @@ public class MemberController {
         Long loginMemberId = memberService.join(member);
 
         if (loginMemberId == null) {
-            result.addError(new FieldError("loginId","loginId","이미 존재하는 ID 입니다."));
+            result.addError(new FieldError("loginId", "loginId", "이미 존재하는 ID 입니다."));
             return "/members/createMemberForm";
         }
         return "redirect:/";
