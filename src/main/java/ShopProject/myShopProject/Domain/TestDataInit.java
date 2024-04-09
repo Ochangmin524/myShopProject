@@ -81,7 +81,10 @@ public class TestDataInit {
             Book book = new Book();
             book.setName(name);
             book.setPrice(price);
+            book.setAuthor("author test");
+            book.setIsbn("isbn test");
             book.setStockQuantity(stockQuantity);
+            book.setCategory("Book");
             return book;
         }
 

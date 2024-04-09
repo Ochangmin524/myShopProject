@@ -42,8 +42,6 @@ public class ItemController {
         if (bindingResult.hasErrors()) {
             return "items/createItemForm";
         }
-
-
         createAndJoin(form);
         List<Item> items = itemService.findItems();
         model.addAttribute("items", items);
@@ -69,6 +67,7 @@ public class ItemController {
             book.setAuthor(form.getAuthor());
             book.setIsbn(form.getIsbn());
             book.setStockQuantity(form.getStockQuantity());
+            book.setCategory("Book");
             itemService.saveItem(book);
         }
         if (category.equals("Album")) {
@@ -80,6 +79,8 @@ public class ItemController {
             album.setEtc(form.getEtc());;
             album.setArtist(form.getArtist());
             album.setStockQuantity(form.getStockQuantity());
+            album.setCategory("Album");
+
             itemService.saveItem(album);
         }
         if (category.equals("Movie")) {
@@ -91,6 +92,7 @@ public class ItemController {
             movie.setActor(form.getActor());
             movie.setPrice(form.getPrice());
             movie.setStockQuantity(form.getStockQuantity());
+            movie.setCategory("Movie");
             itemService.saveItem(movie);
         }
     }
@@ -105,9 +107,24 @@ public class ItemController {
         Member member = memberService.findOne(memberId);
         model.addAttribute("item", item);
         model.addAttribute("member", member);
-        return "items/item";
+        log.info("ididididi" +item.getCategory());
+        if (item.getCategory() == null) {
+            return "items/item";
 
+        }
+        if (item.getCategory().equals("Book")) {
+            return "items/item/book";
+        }
+        if (item.getCategory().equals("Album")) {
+            return "items/item/album";
+        }
+        if (item.getCategory().equals("Movie")) {
+            return "items/item/movie";
+        }
+        return "items/item";
     }
+
+
 
     @GetMapping("/admin/item")
     public String AdminItemDetail(@RequestParam("itemId") Long itemId, Model model) {

@@ -29,8 +29,8 @@ public class Item {
     private int stockQuantity; //재고수량
 
 
-    @ManyToMany(mappedBy = "items")
-    private List<Category> categories = new ArrayList<Category>();
+    private String category;
+//    private List<Category> categories = new ArrayList<Category>();
 
 
 

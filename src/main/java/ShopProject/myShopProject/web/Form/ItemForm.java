@@ -1,6 +1,6 @@
 package ShopProject.myShopProject.web.Form;
 
-import ShopProject.myShopProject.Domain.Item.Category;
+//import ShopProject.myShopProject.Domain.Item.Category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
