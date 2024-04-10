@@ -1,6 +1,8 @@
 package ShopProject.myShopProject.Domain.Item;
 
 
+import ShopProject.myShopProject.Domain.LikedItem;
+import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Exception.NotEnoughStockException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,9 +30,9 @@ public class Item {
     @NotNull
     private int stockQuantity; //재고수량
 
+    private int likes = 0; // 좋아요 수
 
     private String category;
-//    private List<Category> categories = new ArrayList<Category>();
 
 
 

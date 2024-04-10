@@ -5,9 +5,13 @@
     <link href="../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <style>
- .container {
- max-width: 560px;
- }
+     .container {
+     max-width: 560px;
+     }
+     .btn.btn-outline-primary.liked {
+                background-color: blue;
+                color: white;
+        }
  </style>
 </head>
 <body>
@@ -45,6 +49,17 @@
         <input type="text" id="isbn" name="isbn" class="form-control"
                value="isbn" th:value="${item.isbn}" readonly>
     </div>
+    <div>
+        <!-- 좋아요 버튼 -->
+        <form th:action="@{'/item/like'}"method="post">
+            <input type="hidden" name="itemId" th:value="${item.id}">
+            <input type="hidden" name="memberId" th:value="${member.id}">
+            <button class="btn btn-outline-primary" th:classappend="${isLiked ? 'liked' : ''}">좋아요</button>
+        </form>
+        <!-- 좋아요 수 -->
+        <span>좋아요 개수: <span th:text="${item.likes}"></span></span>
+    </div>
+
     <hr class="my-4">
     <div class="row">
         <div class="col">

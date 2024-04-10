@@ -1,4 +1,5 @@
 package ShopProject.myShopProject.Domain;
+import ShopProject.myShopProject.Domain.Item.Item;
 import ShopProject.myShopProject.Domain.Order.Order;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -30,5 +31,9 @@ public class Member {
     private String loginId;
     @NotEmpty
     private String password;
+
+    @OneToMany(mappedBy = "member")
+    private List<LikedItem> likedItems = new ArrayList<>();
+
 
 }

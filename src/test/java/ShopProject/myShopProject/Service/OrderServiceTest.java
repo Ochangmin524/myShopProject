@@ -3,7 +3,6 @@ package ShopProject.myShopProject.Service;
 
 import ShopProject.myShopProject.Domain.Address;
 import ShopProject.myShopProject.Domain.Item.Book;
-import ShopProject.myShopProject.Domain.Item.Category;
 import ShopProject.myShopProject.Domain.Item.Item;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Domain.Order.Order;
@@ -12,11 +11,13 @@ import ShopProject.myShopProject.Exception.NotEnoughStockException;
 import ShopProject.myShopProject.Repository.OrderRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +25,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @Transactional
 @SpringBootTest
+@Slf4j
 public class OrderServiceTest {
 
     @PersistenceContext
@@ -39,7 +40,8 @@ public class OrderServiceTest {
     OrderRepository orderRepository;
     @Autowired
     OrderService orderService;
-
+    @Autowired
+    MemberService memberService;
 
     //상품 주문 테스트
     @Test
@@ -94,6 +96,27 @@ public class OrderServiceTest {
         assertEquals(10, item.getStockQuantity(), "수량이 돌아와야 한다.");
         assertEquals(OrderStatus.CANCEL,getOrder.getStatus(), "상태는 cancel이다.");
 
+    }
+    //좋아요 확인 테스트
+    @Test
+    public void islikedTest() {
+        Member member = createMember();
+        Item item = createBook();
+        //아무것도 아닐 때 false여야 한다.
+        assertFalse(memberService.isliked(member, item));
+
+        log.info("_________________________________");
+        //좋아요 상태일 때는 true여야 한다. + 좋아요 추가
+        memberService.likes(member, item);
+        assertTrue(memberService.isliked(member, item));
+        assertEquals(item.getLikes(),1);
+
+        log.info("_________________________________");
+
+        //좋아요 상태에서 likes 메소드를 실행하면 좋아요가 취소되어야 한다. + 좋아요 감소
+        memberService.likes(member, item);
+        assertFalse(memberService.isliked(member, item));
+        assertEquals(item.getLikes(), 0);
     }
 
 

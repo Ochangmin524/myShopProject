@@ -36,7 +36,6 @@ public class ItemController {
         return "items/createItemForm";
     }
 
-    //지금은 book이지만 item으로 바꿀 필요 있으며, 로직 수정해야함
     @PostMapping(value = "/items/new")
     public String create(@Valid ItemForm form, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -76,7 +75,8 @@ public class ItemController {
             Album album = new Album();
             album.setName(form.getName());
             album.setPrice(form.getPrice());
-            album.setEtc(form.getEtc());;
+            album.setEtc(form.getEtc());
+            ;
             album.setArtist(form.getArtist());
             album.setStockQuantity(form.getStockQuantity());
             album.setCategory("Album");
@@ -85,7 +85,6 @@ public class ItemController {
         }
         if (category.equals("Movie")) {
             log.info("영화 객체 생성");
-
             Movie movie = new Movie();
             movie.setName(form.getName());
             movie.setDirector(form.getDirector());
@@ -98,6 +97,25 @@ public class ItemController {
     }
 
 
+    //좋아요 버튼 기능
+
+    //멤버 id, 아이템 id, -> 좋아요 기능 수행 후 여부 추가 + itemgetmmapin으로 redirect
+    @PostMapping("item/like")
+    public String like(@RequestParam("memberId") Long memberId,
+                       @RequestParam("itemId") Long itemId, Model model,
+                       RedirectAttributes re) {
+        log.info("like post 시작");
+        Item item = itemService.findOne(itemId);
+        Member member = memberService.findOne(memberId);
+
+        memberService.likes(member, item);
+        log.info("likes 메소드 완료");
+        re.addAttribute("itemId", item.getId());
+        re.addAttribute("memberId", member.getId());
+        return "redirect:/item";
+    }
+
+
     //아이템 상세 정보
     @GetMapping("item")
     public String itemDetail(@RequestParam("itemId") Long itemId,
@@ -105,13 +123,13 @@ public class ItemController {
                              Model model) {
         Item item = itemService.findOne(itemId);
         Member member = memberService.findOne(memberId);
+
+        // 좋아요 여부 추가
+        model.addAttribute("isLiked", memberService.isliked(member, item));
         model.addAttribute("item", item);
         model.addAttribute("member", member);
-        log.info("ididididi" +item.getCategory());
-        if (item.getCategory() == null) {
-            return "items/item";
 
-        }
+
         if (item.getCategory().equals("Book")) {
             return "items/item/book";
         }
@@ -162,7 +180,10 @@ public class ItemController {
         return "items/updateItemForm";
     }
 
-    //날라오는 bookform은 준영속객체체
+
+
+
+    //날라오는 bookform은 준영속객체
     @PostMapping(value = "/items/{itemId}/edit")
     public String updateItem(@Valid @ModelAttribute("form") editItemForm form, BindingResult bindingResult,
                              @RequestParam("itemId") Long itemId) {
