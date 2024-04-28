@@ -18,3 +18,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
+
+sever:
+  servlet:
+    session:
+      tracking-modes: cookies

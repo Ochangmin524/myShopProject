@@ -5,6 +5,19 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
+
+    <form action="#" method="get">
+        <label for="sortBy">정렬 기준:</label>
+
+        <select name="sortBy" id="sortBy">
+            <option value="">선택하세요</option>
+            <option value="name">상품명</option>
+            <option value="price">가격</option>
+            <option value="likes">좋아요</option>
+        </select>
+        <button type="submit">정렬하기</button>
+    </form>
+
     <div>
         <table class="table table-striped">
             <thead>
@@ -13,6 +26,7 @@
                 <th>상품명</th>
                 <th>가격</th>
                 <th>재고수량</th>
+                <th>좋아요</th>
                 <th></th>
             </tr>
             </thead>
@@ -22,6 +36,8 @@
                 <td th:text="${item.name}"></td>
                 <td th:text="${item.price}"></td>
                 <td th:text="${item.stockQuantity}"></td>
+                <td th:text="${item.likes}"></td>
+
                 <td>
                     <a href="#" th:href="@{/item(itemId=${item.id}, memberId=${memberId})}"
                        class="btn btn-primary" role="button">상품상세</a>

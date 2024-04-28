@@ -154,14 +154,44 @@ public class ItemController {
     //상품 목록
     //여기에 맴버 id가 pathvariable로 들어온다.
     @GetMapping(value = "/items")
-    public String list(@RequestParam("memberId") Long memberId, Model model) {
-
+    public String list(@SessionAttribute(name = "loginMember") Member loginMember,
+                       Model model,
+                       @RequestParam(value = "sortBy", required = false) String sortBy) {
+        log.info("sortBy = {}", sortBy);
         List<Item> items = itemService.findItems();
-        //모델에 멤버 id 도 넣기
-        model.addAttribute("memberId", memberId);
-        model.addAttribute("items", items);
-        return "items/itemList";
+        if (sortBy == null) {
+            model.addAttribute("items", items);
+            return "items/itemList";
+        }
+
+        switch (sortBy) {
+            case "":
+                log.info("DDDD");
+                model.addAttribute("items", items);
+                return "items/itemList";
+
+            case "price":
+                List<Item> itemsByPrice = itemService.findItemsByPrice();
+                model.addAttribute("items", itemsByPrice);
+                return "items/itemList";
+
+            case "likes":
+                List<Item> itemsByLikes = itemService.findItemsByLikes();
+                model.addAttribute("items", itemsByLikes);
+                return "items/itemList";
+
+            case "name":
+                List<Item> itemsByName = itemService.findItemsByName();
+                model.addAttribute("items", itemsByName);
+                return "items/itemList";
+
+            default:
+                model.addAttribute("items", items);
+                return "items/itemList";
+        }
     }
+
+
 
 
     // 상품 수정 폼 접근

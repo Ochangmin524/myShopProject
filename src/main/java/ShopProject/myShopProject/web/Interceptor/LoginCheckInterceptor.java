@@ -22,11 +22,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
 
         if (session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
-
             log.info("미로그인 요청");
-            //login으로 리다이렉트, 쿼리파라미터로 redirect경로를 넣어서 요청앴던 경로로
-            //갈 수 있도록 한다.
-            response.sendRedirect("/login?redirectURL=" +requestURI);
+            response.sendRedirect("/login?redirectURL=" );
+
+
             return false;
         }
         return true;

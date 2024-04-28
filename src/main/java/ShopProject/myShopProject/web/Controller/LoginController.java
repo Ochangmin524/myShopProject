@@ -30,7 +30,6 @@ public class LoginController {
     @PostMapping("/login")
     public String login(
             @Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
-            @RequestParam(name = "redirectURL", defaultValue = "/") String redirectURL,
             HttpServletRequest request)  {
         log.info("로그인 시작");
 
@@ -66,8 +65,7 @@ public class LoginController {
             return "home/adminHome";
         }
         log.info("리다이렉트");
-        //요청 경로가 있다면, 로그인 한 상태로 요청 경로로 바로 이동
-        return "redirect:" + redirectURL;
+        return "redirect:/";
     }
 
 

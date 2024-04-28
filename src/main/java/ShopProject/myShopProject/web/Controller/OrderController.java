@@ -10,6 +10,7 @@ import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.Service.OrderService;
 import ShopProject.myShopProject.web.Form.OrderForm;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -55,14 +56,22 @@ public class OrderController {
     }
 
     @PostMapping(value = "/order")
-    public String order(@ModelAttribute("orderForm") OrderForm orderForm,
+    public String order(@ModelAttribute @Valid OrderForm orderForm,
                         BindingResult bindingResult,
                         RedirectAttributes re,
                         Model model) {
         Long memberId = orderForm.getMemberId();
         Long itemId = orderForm.getItemId();
         Integer count = orderForm.getCount();
+        log.info("count =", count);
         Item item = itemService.findOne(itemId);
+
+        if (bindingResult.hasErrors()) {
+            Member member = memberService.findOne(memberId);
+            model.addAttribute("member", member);
+            model.addAttribute("item", item);
+            return "order/orderForm";
+        }
         if (count > item.getStockQuantity()) {
             bindingResult.reject("overStock","주문수량이 재고보다 많습니다.");
             Member member = memberService.findOne(memberId);
@@ -78,7 +87,6 @@ public class OrderController {
 
         re.addAttribute("memberId", memberId);
         re.addAttribute("memberName",memberName);
-        log.info("이름 dddddddd==="+memberName);
 
         return "redirect:/orders";
     }

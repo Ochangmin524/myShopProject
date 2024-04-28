@@ -26,6 +26,8 @@
             <input type="number" name="count" class="form-control" id="count"
                    placeholder="주문 수량을 입력하세요">
         </div>
+        <div class="field-error" th:if="${#fields.hasErrors('count')}" th:errors="*{count}">오류 메시지</div>
+
 
         <p class="field-error" th:each="err : ${#fields.globalErrors()}"
            th:text="${err}">전체 오류 메시지</p>

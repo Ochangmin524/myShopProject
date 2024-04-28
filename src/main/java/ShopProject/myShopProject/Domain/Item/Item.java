@@ -23,11 +23,9 @@ public class Item {
     @Column(name = "item_id")
     private Long Id;
 
-    @NotEmpty
     private String name;
-    @NotNull
     private int price; //가격
-    @NotNull
+
     private int stockQuantity; //재고수량
 
     private int likes = 0; // 좋아요 수
