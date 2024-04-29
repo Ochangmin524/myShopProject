@@ -15,4 +15,8 @@ public interface ItemRepositorySpringJpa extends JpaRepository<Item, Long> {
     List<Item> findAllByOrderByPriceDesc();
 
     List<Item> findAllByOrderByNameDesc();
+//
+//    Page<Item> findByPrice(Pageable pageable);
+    Page<Item> findAll(Pageable pageable);
+
 }

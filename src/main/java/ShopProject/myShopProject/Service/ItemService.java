@@ -38,7 +38,11 @@ public class ItemService {
         return jpaItemRepository.findAllByOrderByPriceDesc();
     }
 
-
+//    @Transactional
+//    public List<Item> findByPrice() {
+//        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC,
+//                "username"));
+//    }
 
     @Transactional
     public List<Item> findItemsByLikes() {

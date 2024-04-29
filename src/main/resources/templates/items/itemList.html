@@ -6,7 +6,7 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
 
-    <form action="#" method="get">
+    <form action="/items" method="get">
         <label for="sortBy">정렬 기준:</label>
 
         <select name="sortBy" id="sortBy">
@@ -15,6 +15,8 @@
             <option value="price">가격</option>
             <option value="likes">좋아요</option>
         </select>
+
+
         <button type="submit">정렬하기</button>
     </form>
 
@@ -49,6 +51,16 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+
+
+    <div class="pagination">
+        <ul>
+            <li th:each="pageNum : ${#numbers.sequence(0, totalPages-1)}" style="display: inline-block; margin: 5px;">
+                <a th:href="@{/items(page=${pageNum}, sortBy=${sortBy})}" th:text="${pageNum+1}" style="padding: 5px 10px; border: 1px solid #ccc; border-radius: 5px;"></a>
+            </li>
+        </ul>
     </div>
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->

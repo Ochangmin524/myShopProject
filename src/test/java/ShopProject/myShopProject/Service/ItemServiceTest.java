@@ -33,7 +33,7 @@ public class ItemServiceTest {
         item.setName("ItemA");
         itemRepository.save(item);
         for (Item i : items) {
-            System.out.println(i.getName() + "  "+ i.getPrice());
+            System.out.println(i.getName() + "  " + i.getPrice());
 
         }
         assertThat(item).isEqualTo(itemService.findOne(item.getId()));
@@ -65,9 +65,10 @@ public class ItemServiceTest {
         List<Item> findItems = itemService.findItemsByPrice();
 
         for (Item i : findItems) {
-            System.out.println(i.getName() + "  "+ i.getPrice());
+            System.out.println(i.getName() + "  " + i.getPrice());
         }
 
 
     }
+
 }

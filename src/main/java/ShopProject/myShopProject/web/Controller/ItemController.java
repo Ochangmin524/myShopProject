@@ -2,6 +2,7 @@ package ShopProject.myShopProject.web.Controller;
 
 import ShopProject.myShopProject.Domain.Item.*;
 import ShopProject.myShopProject.Domain.Member;
+import ShopProject.myShopProject.Repository.ItemRepositorySpringJpa;
 import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.ItemForm;
@@ -10,6 +11,10 @@ import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +32,7 @@ import java.util.Map;
 public class ItemController {
     private final ItemService itemService;
     private final MemberService memberService;
+    private final ItemRepositorySpringJpa jpaItemRepository;
 
     @GetMapping(value = "/items/new")
     public String createForm(Model model) {
@@ -156,42 +162,57 @@ public class ItemController {
     @GetMapping(value = "/items")
     public String list(@SessionAttribute(name = "loginMember") Member loginMember,
                        Model model,
-                       @RequestParam(value = "sortBy", required = false) String sortBy) {
-        log.info("sortBy = {}", sortBy);
-        List<Item> items = itemService.findItems();
-        if (sortBy == null) {
+                       @RequestParam(value = "sortBy", required = false) String sortBy,
+                       @RequestParam(value = "page", required = false) String pageNum,
+                       RedirectAttributes redirectAttributes,
+                       Pageable pageable) {
+
+        log.info("sortBy = {}",sortBy);
+        if (sortBy == null || sortBy.equals("")) {
+            Page<Item> page = jpaItemRepository.findAll(pageable);
+            List<Item> items = page.getContent();
+
+            int totalPages = page.getTotalPages();
+            model.addAttribute("totalPages", totalPages);
+
+            model.addAttribute("page", 1);
+
             model.addAttribute("items", items);
+            model.addAttribute("memberId", loginMember.getId());
             return "items/itemList";
+        } else {
+
+            ArrayList sort = new ArrayList();
+            sort.add(sortBy);
+            sort.add("desc");
+
+            redirectAttributes.addAttribute("page", pageNum);
+            redirectAttributes.addAttribute("sortBy", sortBy);
+
+            redirectAttributes.addAttribute("sort", sort);
+            return "redirect:/sortedItems";
         }
 
-        switch (sortBy) {
-            case "":
-                log.info("DDDD");
-                model.addAttribute("items", items);
-                return "items/itemList";
-
-            case "price":
-                List<Item> itemsByPrice = itemService.findItemsByPrice();
-                model.addAttribute("items", itemsByPrice);
-                return "items/itemList";
-
-            case "likes":
-                List<Item> itemsByLikes = itemService.findItemsByLikes();
-                model.addAttribute("items", itemsByLikes);
-                return "items/itemList";
-
-            case "name":
-                List<Item> itemsByName = itemService.findItemsByName();
-                model.addAttribute("items", itemsByName);
-                return "items/itemList";
-
-            default:
-                model.addAttribute("items", items);
-                return "items/itemList";
-        }
     }
 
+    @GetMapping(value = "/sortedItems")
+    public String getItemList(@SessionAttribute(name = "loginMember") Member loginMember,
+                              @RequestParam(value = "sortBy", required = false) String sortBy,
+                              Model model,
+                              Pageable pageable)
+     {
+         Page<Item> page = jpaItemRepository.findAll(pageable);
+         List<Item> items = page.getContent();
 
+
+         int totalPages = page.getTotalPages();
+         model.addAttribute("sortBy",sortBy);
+         model.addAttribute("totalPages", totalPages);
+         model.addAttribute("items", items);
+         model.addAttribute("memberId", loginMember.getId());
+        return "items/itemList";
+
+     }
 
 
     // 상품 수정 폼 접근
