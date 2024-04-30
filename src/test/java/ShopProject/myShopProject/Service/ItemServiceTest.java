@@ -40,35 +40,6 @@ public class ItemServiceTest {
     }
 
 
-    @Test()
-    public void findItemsByPrice() {
-        Item item = new Item();
-        item.setPrice(1000);
-        itemRepository.save(item);
-
-        Item item1 = new Item();
-        item1.setPrice(2000);
-        itemRepository.save(item1);
-
-        Item item2 = new Item();
-        item2.setPrice(3000);
-        itemRepository.save(item2);
-
-        Item item3 = new Item();
-        item3.setPrice(4000);
-        itemRepository.save(item3);
-
-        Item item4 = new Item();
-        item4.setPrice(5000);
-        itemRepository.save(item4);
-
-        List<Item> findItems = itemService.findItemsByPrice();
-
-        for (Item i : findItems) {
-            System.out.println(i.getName() + "  " + i.getPrice());
-        }
-
 
     }
 
-}

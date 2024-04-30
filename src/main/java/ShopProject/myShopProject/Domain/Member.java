@@ -27,9 +27,8 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
-    @NotEmpty
+
     private String loginId;
-    @NotEmpty
     private String password;
 
     @OneToMany(mappedBy = "member")

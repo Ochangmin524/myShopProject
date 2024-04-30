@@ -7,6 +7,7 @@ import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Repository.LikeRepository;
 import ShopProject.myShopProject.Repository.MemberRepository;
 import ShopProject.myShopProject.web.Form.MemberForm;
+import ShopProject.myShopProject.web.Form.MemberKakaoForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -109,6 +110,17 @@ public class MemberService {
         member.setPassword(form.getPassword());
         return member;
     }
+
+    //폼으로 맴버 생성 카카오 로그인인 경우
+    @Transactional
+    public Member createMember(MemberKakaoForm form) {
+        Member member = new Member();
+        member.setName(form.getName());
+        member.setLoginId(form.getLoginId());
+        return member;
+
+    }
+
     // id 중복이면 true 반환
     private boolean isLoginIdDuplicate(Member member) {
         Optional<Member> findMembers = memberRepository.findByLoginId(member.getLoginId());

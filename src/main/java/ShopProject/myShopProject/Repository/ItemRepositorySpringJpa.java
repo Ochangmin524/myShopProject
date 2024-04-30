@@ -10,13 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ItemRepositorySpringJpa extends JpaRepository<Item, Long> {
-    List<Item> findAllByOrderByLikesDesc();
 
-    List<Item> findAllByOrderByPriceDesc();
-
-    List<Item> findAllByOrderByNameDesc();
-//
-//    Page<Item> findByPrice(Pageable pageable);
     Page<Item> findAll(Pageable pageable);
 
 }

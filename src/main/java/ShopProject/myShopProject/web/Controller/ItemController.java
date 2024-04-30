@@ -158,7 +158,6 @@ public class ItemController {
     }
 
     //상품 목록
-    //여기에 맴버 id가 pathvariable로 들어온다.
     @GetMapping(value = "/items")
     public String list(@SessionAttribute(name = "loginMember") Member loginMember,
                        Model model,

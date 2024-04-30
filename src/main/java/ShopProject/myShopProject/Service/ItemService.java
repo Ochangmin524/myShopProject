@@ -33,26 +33,8 @@ public class ItemService {
     }
 
 
-    @Transactional
-    public List<Item> findItemsByPrice() {
-        return jpaItemRepository.findAllByOrderByPriceDesc();
-    }
 
-//    @Transactional
-//    public List<Item> findByPrice() {
-//        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC,
-//                "username"));
-//    }
 
-    @Transactional
-    public List<Item> findItemsByLikes() {
-        return jpaItemRepository.findAllByOrderByLikesDesc();
-    }
-
-    @Transactional
-    public List<Item> findItemsByName() {
-        return jpaItemRepository.findAllByOrderByNameDesc();
-    }
 
     @Transactional
     public void updateItem(Long id, String name, int price, int stockQuantity) {

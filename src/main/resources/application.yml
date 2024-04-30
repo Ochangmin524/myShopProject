@@ -22,7 +22,12 @@ logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
 
-sever:
+server:
   servlet:
     session:
-      tracking-modes: cookies
+      timeout: 30m
+      tracking-modes: cookie
+
+#kakao:
+#  client_id : 5ec10617daa936d308701ea688c7fe79
+#  redirect_url : http://localhost:8080/callback
