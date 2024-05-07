@@ -91,7 +91,6 @@ public class KakaoLoginService {
             result += line;
         }
 
-        log.info(" 시ㅓㅇ미ㅏ얼 Response Body : " + result);
 
         // jackson objectmapper 객체 생성
         ObjectMapper objectMapper = new ObjectMapper();

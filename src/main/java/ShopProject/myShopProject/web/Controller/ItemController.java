@@ -125,15 +125,16 @@ public class ItemController {
     //아이템 상세 정보
     @GetMapping("item")
     public String itemDetail(@RequestParam("itemId") Long itemId,
-                             @RequestParam("memberId") Long memberId,
+                             @SessionAttribute(name = "loginMember") Member loginMember,
                              Model model) {
+        log.info("item 호출");
         Item item = itemService.findOne(itemId);
-        Member member = memberService.findOne(memberId);
+
 
         // 좋아요 여부 추가
-        model.addAttribute("isLiked", memberService.isliked(member, item));
+        model.addAttribute("isLiked", memberService.isliked(loginMember, item));
         model.addAttribute("item", item);
-        model.addAttribute("member", member);
+        model.addAttribute("member", loginMember);
 
 
         if (item.getCategory().equals("Book")) {
@@ -183,6 +184,7 @@ public class ItemController {
 
             ArrayList sort = new ArrayList();
             sort.add(sortBy);
+            sort.add("id");
             sort.add("desc");
 
             redirectAttributes.addAttribute("page", pageNum);
