@@ -113,10 +113,11 @@ public class MemberService {
 
     //폼으로 맴버 생성 카카오 로그인인 경우
     @Transactional
-    public Member createMember(MemberKakaoForm form) {
+    public Member createKakaoMember(MemberKakaoForm form) {
         Member member = new Member();
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
+        member.setPassword("K");
         return member;
 
     }
