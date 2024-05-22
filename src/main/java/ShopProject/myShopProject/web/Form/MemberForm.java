@@ -2,7 +2,6 @@ package ShopProject.myShopProject.web.Form;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,6 @@ public class MemberForm {
     @NotEmpty
     private String loginId;
     @NotEmpty
-    @Size(min = 2)
     private String password;
 
     @NotEmpty(message = "회원 이름은 필수입니다.")

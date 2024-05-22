@@ -34,4 +34,5 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<LikedItem> likedItems = new ArrayList<>();
 
+
 }

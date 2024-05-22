@@ -38,18 +38,9 @@ public class MemberController {
     @PostMapping(value = "/member/withdraw")
     public String removeMember(@RequestParam("memberId") Long memberId ,HttpServletRequest request) {
         Member loginMember = memberService.findOne(memberId);
-        //카카오 로그인인 경우 카카오 전용 탈퇴
-        if (loginMember.getPassword().equals("K")) {
-            log.info("카카오 로그인, 카카오 전용 탈퇴 컨트롤러 호출");
-            return "redirect:/login/withdrawByKakao";
-        }
-
         memberService.removeMember(loginMember);
         HttpSession session = request.getSession();
         session.invalidate();
-
-
-
         return "redirect:/";
     }
     // 관리자 회원 탈퇴

@@ -12,6 +12,4 @@ public class MemberKakaoForm {
     private String name;
     @NotEmpty
     private String loginId;
-
-
 }

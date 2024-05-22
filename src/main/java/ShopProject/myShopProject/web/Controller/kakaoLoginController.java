@@ -11,21 +11,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.io.IOException;
 import java.util.HashMap;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class kakaoLoginController {
-    private String client_id = "5ec10617daa936d308701ea688c7fe79";
+    private String client_id ="5ec10617daa936d308701ea688c7fe79";
     private final KakaoLoginService kakaoLoginService;
     private final MemberService memberService;
-
     @GetMapping("/login/callback")
     public String KakaoLoginCallback(@RequestParam("code") String code,
                                      HttpServletRequest request) throws IOException {
@@ -42,7 +38,7 @@ public class kakaoLoginController {
         //맴버 생성 - 회원가입 과정
         log.info("회원가입 과정");
 
-        Member member = memberService.createKakaoMember(form);
+        Member member = memberService.createMember(form);
         Long loginMemberId = memberService.join(member);
 
 
@@ -56,24 +52,5 @@ public class kakaoLoginController {
         //로그인 성공 후 로그인 폼으로 이동
         log.info("로그인 성공 후 로그인 폼으로 이동");
         return "redirect:/";
-    }
-
-    @GetMapping("/login/withdrawByKakao")
-    public String WithdrawByKakao(@SessionAttribute(name = "loginMember") Member loginMember,
-                                  HttpServletRequest request) throws IOException {
-        log.info("카카오 전용 탈퇴 컨트롤러 호출 완료");
-        //카카오에게 회원 연결 끊기 POST 요청 보내기
-        kakaoLoginService.withdrawKakaoMemberByAdminKey(loginMember);
-
-        //DB에서 회원 삭제
-        memberService.removeMember(loginMember);
-
-        //애플리케이션에서 세션 삭제
-        HttpSession session = request.getSession();
-        session.invalidate();
-
-        //홈으로 리다이렉트
-        return "redirect:/";
-
     }
 }
