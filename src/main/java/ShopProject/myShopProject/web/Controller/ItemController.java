@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -107,17 +108,17 @@ public class ItemController {
 
     //멤버 id, 아이템 id, -> 좋아요 기능 수행 후 여부 추가 + itemgetmmapin으로 redirect
     @PostMapping("item/like")
-    public String like(@RequestParam("memberId") Long memberId,
+    public String like(@SessionAttribute(name = "loginMember") Member member,
                        @RequestParam("itemId") Long itemId, Model model,
                        RedirectAttributes re) {
         log.info("like post 시작");
         Item item = itemService.findOne(itemId);
-        Member member = memberService.findOne(memberId);
+
 
         memberService.likes(member, item);
         log.info("likes 메소드 완료");
+        log.info("조하용 아이템 = " + member.getLikedItems().size());
         re.addAttribute("itemId", item.getId());
-        re.addAttribute("memberId", member.getId());
         return "redirect:/item";
     }
 
@@ -129,8 +130,8 @@ public class ItemController {
                              Model model) {
         log.info("item 호출");
         Item item = itemService.findOne(itemId);
-
-
+        log.info(loginMember.getLoginId() + " " + loginMember.getName());
+        log.info("좋아요 크기 =" + loginMember.getLikedItems().size());
         // 좋아요 여부 추가
         model.addAttribute("isLiked", memberService.isliked(loginMember, item));
         model.addAttribute("item", item);

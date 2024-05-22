@@ -8,8 +8,10 @@ import ShopProject.myShopProject.Repository.LikeRepository;
 import ShopProject.myShopProject.Repository.MemberRepository;
 import ShopProject.myShopProject.web.Form.MemberForm;
 import ShopProject.myShopProject.web.Form.MemberKakaoForm;
+import jakarta.persistence.PersistenceUnitUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,20 +45,21 @@ public class MemberService {
     @Transactional
     public Boolean isliked(Member member, Item item) {
         log.info("좋아요 확인 메서드 실행");
-        log.info("좋아요 아이템 개수"+ member.getLikedItems().size());
-
-
         List<LikedItem> likedItems = member.getLikedItems();
-        for (LikedItem likeditem: likedItems) {
-            if (likeditem.getItem().equals(item)) {
-                log.info("좋아요인 경우");
+        log.info(String.valueOf(likedItems));
+        log.info("프록시 객체에 접근하기 "+ likedItems.size());
 
+
+
+
+        for (LikedItem likeditem: member.getLikedItems()) {
+            if (likeditem.getItem().getName().equals(item.getName())) {
+                log.info("좋아요인 경우");
                 return true;
             }
 
         }
         log.info("좋아요 아닌 경우");
-
         return false;
     }
 
@@ -64,10 +67,8 @@ public class MemberService {
     @Transactional
     public void likes(Member member, Item item) {
         log.info("좋아요 메서드 실행");
-
         // 좋아요 -> 좋아요 취소
         if (isliked(member, item)) {
-
             for (LikedItem likedItem : member.getLikedItems()) {
                 if (likedItem.getItem().equals(item)) {
                     log.info("좋아요 아이템 조회 성공");
