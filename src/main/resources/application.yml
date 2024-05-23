@@ -25,6 +25,7 @@ logging.level:
 server:
   servlet:
     session:
+      persistent : false
       timeout: 30m
       tracking-modes: cookie
 

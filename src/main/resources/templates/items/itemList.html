@@ -41,10 +41,10 @@
                 <td th:text="${item.likes}"></td>
 
                 <td>
-                    <a href="#" th:href="@{/item(itemId=${item.id}, memberId=${memberId})}"
+                    <a href="#" th:href="@{/item(itemId=${item.id})}"
                        class="btn btn-primary" role="button">상품상세</a>
 
-                    <a href="#" th:href="@{/order(itemId=${item.id}, memberId=${memberId})}"
+                    <a href="#" th:href="@{/order(itemId=${item.id})}"
                        class="btn btn-primary" role="button">주문</a>
 
                 </td>

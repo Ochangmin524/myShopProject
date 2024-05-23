@@ -1,8 +1,10 @@
 package ShopProject.myShopProject.Repository;
 
 
+import ShopProject.myShopProject.Domain.LikedItem;
 import ShopProject.myShopProject.Domain.Member;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
@@ -39,12 +41,30 @@ public class MemberRepository {
 
 
     //회원 로그인ID로 찾기
-    public  Optional<Member> findByLoginId(String loginId) {
+    public Optional<Member> findByLoginId(String loginId) {
         return findAll().stream()
                 .filter(m -> m.getLoginId().equals(loginId))
                 .findFirst();
     }
+    public List<LikedItem> findLikedItems(Member member){
+        return em.createQuery("select i from LikedItem i where i.member = :member",
+                        LikedItem.class)
+                .setParameter("member", member)
+                .getResultList();
 
+    }
+
+    public Member findMemberwithLikedItems(Member member) {
+        try{
+        return em.createQuery(
+                "select m from Member m left join fetch m.likedItems where m.id = :memberId"
+                        , Member.class).setParameter("memberId",member.getId())
+                .getSingleResult();}
+        catch (NoResultException e){
+            return null;
+        }
+
+    }
     // 회원 이름으로 찾기
     public List<Member> findByName(String name) {
         return em.createQuery("select m from Member m where m.name = :name",

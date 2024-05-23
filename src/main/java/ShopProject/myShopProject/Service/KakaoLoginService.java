@@ -1,5 +1,6 @@
 package ShopProject.myShopProject.Service;
 
+import ShopProject.myShopProject.Domain.Member;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +9,56 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Service
 public class KakaoLoginService {
+    public void withdrawKakaoMemberByAdminKey(Member member)throws IOException {
 
+        String reqURL = "https://kapi.kakao.com/v1/user/unlink";
+        URL url = new URL(reqURL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();//URL을 사용해서 커넥션을 얻기
+        conn.setRequestMethod("POST");  //PSOT 요청 보내기
+        conn.setRequestProperty("Authorization", "KakaoAK 7b30c95c0f1dfcb0c02dd095fcece882");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+        String bodyData = "target_id_type=user_id&target_id=" + member.getLoginId();
+
+        conn.setDoOutput(true);
+        try(OutputStream os = conn.getOutputStream()) {
+            byte[] input = bodyData.getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
+        }
+
+
+
+
+
+
+        String line = "";
+        String result = "";
+
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+        while ((line = br.readLine()) != null) {
+            result += line;
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonMap = objectMapper.readValue(result, new TypeReference<Map<String, Object>>() {
+        });
+
+        log.info("Response Body : " + result);
+
+
+    }
 
     //로그인 성공후 받은 code를 이용하여 토큰을 받아오는 메소드
     public String getAccessTokenFromKakao(String client_id, String code) throws IOException {
@@ -101,7 +143,6 @@ public class KakaoLoginService {
 
         //사용자 정보 추출
         Map<String, Object> properties = (Map<String, Object>) jsonMap.get("properties");
-        Map<String, Object> kakao_account = (Map<String, Object>) jsonMap.get("kakao_account");
 
 
         Long id = (Long) jsonMap.get("id");

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -41,18 +42,17 @@ public class MemberService {
         memberRepository.removeMember(member);
     }
 
+
+
+
     //좋아요 아이템이 아니면 false 반환
     @Transactional
     public Boolean isliked(Member member, Item item) {
         log.info("좋아요 확인 메서드 실행");
-        List<LikedItem> likedItems = member.getLikedItems();
-        log.info(String.valueOf(likedItems));
-        log.info("프록시 객체에 접근하기 "+ likedItems.size());
+//
+        log.info("멤버 정보" + member.getName() + " " + member.getLoginId());
 
-
-
-
-        for (LikedItem likeditem: member.getLikedItems()) {
+        for (LikedItem likeditem: memberRepository.findLikedItems(member)) {
             if (likeditem.getItem().getName().equals(item.getName())) {
                 log.info("좋아요인 경우");
                 return true;
@@ -65,12 +65,16 @@ public class MemberService {
 
     // 좋아요 -> 좋아요 취소 / 좋아요x -> 좋아요
     @Transactional
-    public void likes(Member member, Item item) {
+    public void likes(Member mem, Item item) {
         log.info("좋아요 메서드 실행");
         // 좋아요 -> 좋아요 취소
+        Member member = memberRepository.findMemberwithLikedItems(mem);
+        log.info("좋아요 멤버 " + member.getName());
+        log.info("좋아요 목록" + member.getLikedItems().toString());
         if (isliked(member, item)) {
             for (LikedItem likedItem : member.getLikedItems()) {
-                if (likedItem.getItem().equals(item)) {
+
+                if (likedItem.getItem().getId().equals(item.getId())) {
                     log.info("좋아요 아이템 조회 성공");
                     member.getLikedItems().remove(likedItem);
                     likeRepository.removeLikedItem(likedItem);
@@ -83,6 +87,8 @@ public class MemberService {
         else {
             log.info("좋아요아이템 생성");
             LikedItem likedItem = new LikedItem();
+            log.info("여기에서는 "+item);
+
             likedItem.setItem(item);
             likedItem.setMember(member);
             likeRepository.addLikedItem(likedItem);
@@ -114,10 +120,11 @@ public class MemberService {
 
     //폼으로 맴버 생성 카카오 로그인인 경우
     @Transactional
-    public Member createMember(MemberKakaoForm form) {
+    public Member createKakaoMember(MemberKakaoForm form) {
         Member member = new Member();
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
+        member.setPassword("K");
         return member;
 
     }
@@ -133,7 +140,10 @@ public class MemberService {
 
 
 
-
+    public Member findByLoginId(String loginId) {
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoSuchElementException("No member found with loginId: " + loginId));
+    }
 
     //하나만 조회
     public Member findOne(Long id) {

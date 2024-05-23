@@ -117,7 +117,6 @@ public class ItemController {
 
         memberService.likes(member, item);
         log.info("likes 메소드 완료");
-        log.info("조하용 아이템 = " + member.getLikedItems().size());
         re.addAttribute("itemId", item.getId());
         return "redirect:/item";
     }
@@ -131,7 +130,6 @@ public class ItemController {
         log.info("item 호출");
         Item item = itemService.findOne(itemId);
         log.info(loginMember.getLoginId() + " " + loginMember.getName());
-        log.info("좋아요 크기 =" + loginMember.getLikedItems().size());
         // 좋아요 여부 추가
         model.addAttribute("isLiked", memberService.isliked(loginMember, item));
         model.addAttribute("item", item);
@@ -167,7 +165,6 @@ public class ItemController {
                        @RequestParam(value = "page", required = false) String pageNum,
                        RedirectAttributes redirectAttributes,
                        Pageable pageable) {
-
         log.info("sortBy = {}",sortBy);
         if (sortBy == null || sortBy.equals("")) {
             Page<Item> page = jpaItemRepository.findAll(pageable);

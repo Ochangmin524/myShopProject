@@ -33,13 +33,13 @@ public class OrderController {
     private final ItemService itemService;
 
     @GetMapping(value = "/order")
-    public String createForm(@RequestParam("itemId") Long itemId,
-                             @RequestParam("memberId") Long memberId,
-                             @ModelAttribute("orderForm") OrderForm orderForm,
+    public String createForm(@SessionAttribute(name = "loginMember") Member loginMember,
+            @RequestParam("itemId") Long itemId,
                              Model model) {
-        Member member = memberService.findOne(memberId);
         Item item = itemService.findOne(itemId);
-        model.addAttribute("member", member);
+        OrderForm orderForm = new OrderForm();
+        model.addAttribute("orderForm", orderForm);
+        model.addAttribute("member", loginMember);
         model.addAttribute("item", item);
         return "order/orderForm";
     }
@@ -63,7 +63,7 @@ public class OrderController {
         Long memberId = orderForm.getMemberId();
         Long itemId = orderForm.getItemId();
         Integer count = orderForm.getCount();
-        log.info("count =", count);
+        log.info("count ="+ count);
         Item item = itemService.findOne(itemId);
 
         if (bindingResult.hasErrors()) {
@@ -94,7 +94,6 @@ public class OrderController {
     @GetMapping(value = "/orders")
     public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch,
                             @RequestParam(value = "memberName" ,required = false) String memberName,
-                            @RequestParam(value = "memberId" ,required = false) Long memberId,
                             Model model) {
         log.info("이름 ==="+memberName);
 
@@ -108,14 +107,13 @@ public class OrderController {
             //맴버의 주문 내역 가져와 보내기
             List<Order> orders = this.orderService.findOrders(preOrderSearch);
             model.addAttribute("orders", orders);
-            model.addAttribute("memberId", memberId);
             return "order/orderList";
         }
 
         //검색 요청이 들어왔을 경우
         List<Order> orders = this.orderService.findOrders(orderSearch);
         model.addAttribute("orders", orders);
-        model.addAttribute("memberId", memberId);
+
 
         return "order/orderList";
 

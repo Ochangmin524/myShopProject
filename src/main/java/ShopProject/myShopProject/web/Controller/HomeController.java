@@ -39,6 +39,8 @@ public class HomeController {
         }
         //로그인한 회원이면 loginHome 으로
         model.addAttribute(loginMember);
+
+        log.info("으아아아아아 " + loginMember.getLoginId());
         return "home/loginHome";
     }
 
