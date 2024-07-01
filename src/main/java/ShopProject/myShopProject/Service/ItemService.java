@@ -10,13 +10,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemService {
-    //    private final ItemRepository itemRepository;
+    private final EmbeddingService embeddingService;
+
+    //스프링 데이터 JPA로 리펙토링
     private final ItemRepositorySpringJpa jpaItemRepository;
 
     @Transactional
@@ -37,9 +40,11 @@ public class ItemService {
 
 
     @Transactional
-    public void updateItem(Long id, String name, int price, int stockQuantity) {
+    public void updateItem(Long id, String name, int price, int stockQuantity) throws IOException {
         Item item = jpaItemRepository.findById(id).get();
         item.setName(name);
+        String embeddingScore = embeddingService.getEmbeddingScore(name);
+        item.setEmbeddingScore(embeddingScore);
         item.setPrice(price);
         item.setStockQuantity(stockQuantity);
 

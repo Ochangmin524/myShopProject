@@ -1,9 +1,11 @@
 package ShopProject.myShopProject.Service;
 
 import ShopProject.myShopProject.Domain.Address;
+import ShopProject.myShopProject.Domain.Cart;
 import ShopProject.myShopProject.Domain.Item.Item;
 import ShopProject.myShopProject.Domain.LikedItem;
 import ShopProject.myShopProject.Domain.Member;
+import ShopProject.myShopProject.Repository.CartRepositoryJPA;
 import ShopProject.myShopProject.Repository.LikeRepository;
 import ShopProject.myShopProject.Repository.MemberRepository;
 import ShopProject.myShopProject.web.Form.MemberForm;
@@ -24,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
-
+    private final CartService cartService;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     //회원 가입
@@ -33,7 +35,10 @@ public class MemberService {
         if(isLoginIdDuplicate(member)){
             return null;
         }
+        Cart cart = cartService.createCart();
+        member.setCart(cart);
         memberRepository.save(member);
+
         return member.getId();
     }
 
@@ -88,7 +93,6 @@ public class MemberService {
             log.info("좋아요아이템 생성");
             LikedItem likedItem = new LikedItem();
             log.info("여기에서는 "+item);
-
             likedItem.setItem(item);
             likedItem.setMember(member);
             likeRepository.addLikedItem(likedItem);
@@ -115,6 +119,8 @@ public class MemberService {
         member.setName(form.getName());
         member.setLoginId(form.getLoginId());
         member.setPassword(form.getPassword());
+
+
         return member;
     }
 

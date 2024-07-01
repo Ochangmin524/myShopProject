@@ -73,13 +73,15 @@ public class kakaoLoginController {
         }
         }
 
+
+
+    //카카오 회원 탈퇴
     @GetMapping("/login/withdrawByKakao")
     public String WithdrawByKakao(@SessionAttribute(name = "loginMember") Member loginMember,
                                   HttpServletRequest request) throws IOException {
         log.info("카카오 전용 탈퇴 컨트롤러 호출 완료");
         //카카오에게 회원 연결 끊기 POST 요청 보내기
         kakaoLoginService.withdrawKakaoMemberByAdminKey(loginMember);
-
         //DB에서 회원 삭제
         memberService.removeMember(loginMember);
 

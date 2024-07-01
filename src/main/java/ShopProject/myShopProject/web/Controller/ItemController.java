@@ -3,6 +3,7 @@ package ShopProject.myShopProject.web.Controller;
 import ShopProject.myShopProject.Domain.Item.*;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Repository.ItemRepositorySpringJpa;
+import ShopProject.myShopProject.Service.EmbeddingService;
 import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.MemberService;
 import ShopProject.myShopProject.web.Form.ItemForm;
@@ -22,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +36,7 @@ public class ItemController {
     private final ItemService itemService;
     private final MemberService memberService;
     private final ItemRepositorySpringJpa jpaItemRepository;
-
+    private final EmbeddingService embeddingService;
     @GetMapping(value = "/items/new")
     public String createForm(Model model) {
         ItemForm itemForm = new ItemForm();
@@ -44,7 +46,7 @@ public class ItemController {
     }
 
     @PostMapping(value = "/items/new")
-    public String create(@Valid ItemForm form, BindingResult bindingResult, Model model) {
+    public String create(@Valid ItemForm form, BindingResult bindingResult, Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             return "items/createItemForm";
         }
@@ -62,13 +64,19 @@ public class ItemController {
     }
 
 
-    private void createAndJoin(ItemForm form) {
+    private void createAndJoin(ItemForm form) throws IOException {
         String category = form.getCategory();
         if (category.equals("Book")) {
+            //상품명의 임베딩 값 생성
+
+
+
             //도서 객체 생성
             log.info("도서 객체 생성");
             Book book = new Book();
             book.setName(form.getName());
+            String embeddingScore = embeddingService.getEmbeddingScore(form.getName());
+            book.setEmbeddingScore(embeddingScore);
             book.setPrice(form.getPrice());
             book.setAuthor(form.getAuthor());
             book.setIsbn(form.getIsbn());
@@ -83,7 +91,8 @@ public class ItemController {
             album.setName(form.getName());
             album.setPrice(form.getPrice());
             album.setEtc(form.getEtc());
-            ;
+            String embeddingScore = embeddingService.getEmbeddingScore(form.getName());
+            album.setEmbeddingScore(embeddingScore);
             album.setArtist(form.getArtist());
             album.setStockQuantity(form.getStockQuantity());
             album.setCategory("Album");
@@ -94,6 +103,8 @@ public class ItemController {
             log.info("영화 객체 생성");
             Movie movie = new Movie();
             movie.setName(form.getName());
+            String embeddingScore = embeddingService.getEmbeddingScore(form.getName());
+            movie.setEmbeddingScore(embeddingScore);
             movie.setDirector(form.getDirector());
             movie.setActor(form.getActor());
             movie.setPrice(form.getPrice());
@@ -236,7 +247,7 @@ public class ItemController {
     //날라오는 bookform은 준영속객체
     @PostMapping(value = "/items/{itemId}/edit")
     public String updateItem(@Valid @ModelAttribute("form") editItemForm form, BindingResult bindingResult,
-                             @RequestParam("itemId") Long itemId) {
+                             @RequestParam("itemId") Long itemId) throws IOException {
 
         if (bindingResult.hasErrors()) {
             log.info("문제 발생");

@@ -100,12 +100,7 @@ public class OrderController {
         //처음 요청
         if (orderSearch == null) {
             //주문한 맴버 정보로 orderSearch 생성
-            OrderSearch preOrderSearch = new OrderSearch();
-            preOrderSearch.setMemberName(memberName);
-            preOrderSearch.setOrderStatus(ORDER);
-
-            //맴버의 주문 내역 가져와 보내기
-            List<Order> orders = this.orderService.findOrders(preOrderSearch);
+            List<Order> orders = orderService.getOrdersByNameWithStatus(memberName, ORDER);
             model.addAttribute("orders", orders);
             return "order/orderList";
         }
@@ -116,9 +111,8 @@ public class OrderController {
 
 
         return "order/orderList";
-
-
     }
+
 
 
     @PostMapping(value = "/orders/{orderId}/cancel")

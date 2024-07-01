@@ -6,6 +6,7 @@ import ShopProject.myShopProject.Domain.Item.Item;
 import ShopProject.myShopProject.Domain.Member;
 import ShopProject.myShopProject.Domain.Order.Order;
 import ShopProject.myShopProject.Domain.Order.OrderItem;
+import ShopProject.myShopProject.Domain.Order.OrderStatus;
 import ShopProject.myShopProject.Domain.OrderSearch;
 import ShopProject.myShopProject.Repository.ItemRepository;
 import ShopProject.myShopProject.Repository.MemberRepository;
@@ -14,6 +15,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.List;
 
@@ -28,9 +30,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
 
-    public List<Order> findOrders(OrderSearch orderSearch) {
-        return orderRepository.findAllByString(orderSearch);
-    }
+
 
 
 
@@ -63,7 +63,19 @@ public class OrderService {
         Order order = orderRepository.findOne(orderId);
         order.cancel();
     }
+    @Transactional
+    public List<Order> getOrdersByNameWithStatus(String memberName, OrderStatus status) {
+        OrderSearch preOrderSearch = new OrderSearch();
+        preOrderSearch.setMemberName(memberName);
+        preOrderSearch.setOrderStatus(status);
 
+        //맴버의 주문 내역 가져와 보내기
+        List<Order> orders = this.findOrders(preOrderSearch);
+        return orders;
 
+    }
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllByString(orderSearch);
+    }
 
 }

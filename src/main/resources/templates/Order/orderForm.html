@@ -4,7 +4,7 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-    <form role="form" action="/order" th:object = "${orderForm}" method="post">
+    <form role="form" action="#" th:action="@{'/order'}" th:object = "${orderForm}" method="post">
         <div class="form-group">
             <label>주문회원</label>
             <input type="hidden" name ="memberId"
@@ -34,13 +34,14 @@
 
 
         <button type="submit" class="btn btn-primary">주문하기</button>
+        <button type="submit" th:formaction="@{/addCart}" class="w-100 btn btn-secondary btn-lg">
+            장바구니 담기
+        </button>
         <button type="button" class="btn btn-primary"
                 th:onclick="|location.href='@{/items(memberId=${member.id})}'|">목록으로</button>
 
-
-
     </form>
-    <br/>
+
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
 </body>

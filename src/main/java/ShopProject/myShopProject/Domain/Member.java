@@ -1,6 +1,7 @@
 package ShopProject.myShopProject.Domain;
 import ShopProject.myShopProject.Domain.Item.Item;
 import ShopProject.myShopProject.Domain.Order.Order;
+import ShopProject.myShopProject.web.Form.OrderForm;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,13 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE)
     private List<Order> orders = new ArrayList<>();
 
+
+
+
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     private String loginId;
     private String password;

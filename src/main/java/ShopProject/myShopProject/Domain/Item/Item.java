@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 @Getter @Setter
-public class Item {
+public class Item  implements Serializable {
 
     @Id @GeneratedValue
     @Column(name = "item_id")
@@ -32,7 +33,7 @@ public class Item {
 
     private String category;
 
-
+    private String embeddingScore; // 임베딩 값
 
     //비즈니스 로직//
     //제고 수량 더하기

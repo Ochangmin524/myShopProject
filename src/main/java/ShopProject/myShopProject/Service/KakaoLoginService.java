@@ -19,6 +19,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class KakaoLoginService {
+
+
+    //카카오 로그인 연결 끊기 요청 보내기 메소드
     public void withdrawKakaoMemberByAdminKey(Member member)throws IOException {
 
         String reqURL = "https://kapi.kakao.com/v1/user/unlink";
@@ -38,9 +41,6 @@ public class KakaoLoginService {
 
 
 
-
-
-
         String line = "";
         String result = "";
 
@@ -56,7 +56,6 @@ public class KakaoLoginService {
         });
 
         log.info("Response Body : " + result);
-
 
     }
 
