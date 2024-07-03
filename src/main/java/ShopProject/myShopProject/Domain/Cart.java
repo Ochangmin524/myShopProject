@@ -1,7 +1,5 @@
 package ShopProject.myShopProject.Domain;
 
-import ShopProject.myShopProject.web.Form.CartForm;
-import ShopProject.myShopProject.web.Form.OrderForm;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

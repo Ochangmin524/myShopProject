@@ -2,17 +2,19 @@ package ShopProject.myShopProject.web.Controller;
 
 import ShopProject.myShopProject.Domain.Cart;
 import ShopProject.myShopProject.Domain.Member;
+import ShopProject.myShopProject.Exception.NotEnoughStockException;
 import ShopProject.myShopProject.Service.CartService;
 import ShopProject.myShopProject.Service.ItemService;
 import ShopProject.myShopProject.Service.OrderService;
 import ShopProject.myShopProject.web.Form.CartDTO;
-import ShopProject.myShopProject.web.Form.CartForm;
+import ShopProject.myShopProject.Domain.CartForm;
 import ShopProject.myShopProject.web.Form.OrderForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,11 +56,12 @@ public class CartController {
 
     //장바구니에서 상품 삭제 발생
     //수정된 cart를 다시 보낸다.
-    @PostMapping("/deleteCart")
+    @PostMapping("/deleteCartItem/{formId}")
     public String deleteCart(@SessionAttribute(name = "loginMember") Member loginMember,
-                             @ModelAttribute @Valid CartForm cartForm){
-        Cart cart = loginMember.getCart();
-        cartService.deleteCart(cart, cartForm);
+                             @PathVariable("formId") Long formId){
+        log.info("폼 아이디 = : {}", formId);
+
+        cartService.deleteCart(loginMember, formId);
         return "redirect:/cart"; //장바구니로 리다이렉트
     }
 
@@ -72,13 +75,12 @@ public class CartController {
         //카트에서 orderform을 꺼낸다.
         List<OrderForm> carts = cartDTO.getForms();
         //하나하나 수정하기
-        for (OrderForm cartForm : carts) {
-            Cart cart = cartService.findCartByMember(loginMember);
+        if(carts != null){
+            for (OrderForm cartForm : carts) {
+                Cart cart = cartService.findCartByMember(loginMember);
+                cartService.updateCart(cart, cartDTO.getCartFormId(), cartForm.getCount());
 
-            cartService.updateCart(cart,cartDTO.getCartFormId(), cartForm.getCount());
-            log.info("item name : {}", cartForm.getItemId());
-            log.info("item count : {}", cartForm.getCount());
-            log.info("cartFormId : {}", cartDTO.getCartFormId());
+            }
         }
 
         //수정 완료 후 아이템 리스트로 간다.
@@ -91,15 +93,19 @@ public class CartController {
     @PostMapping("/buyCart")
     public String buyCart(@SessionAttribute(name = "loginMember") Member loginMember,
                           @ModelAttribute CartDTO cartDTO,
+                          BindingResult bindingResult,
                           Model model) {
         //카트에서 orderform을 꺼낸다.
         List<OrderForm> carts = cartDTO.getForms();
         //하나하나 결재 진행시키기
-        for (OrderForm cartForm : carts) {
-            orderService.order(loginMember.getId(), cartForm.getItemId(),cartForm.getCount());
-            log.info("item name : {}", cartForm.getItemId());
-            log.info("item count : {}", cartForm.getCount());
+
+        try {
+            orderService.deleteCarts(carts, loginMember.getId());
+        } catch (NotEnoughStockException e) {
+            bindingResult.reject("overstock","주문 수량이 재고보다 많습니다.");
+            return "redirect:/cart";
         }
+
 
         model.addAttribute("memberName", loginMember.getName());
         //결재 다 하면 결제 리스트 페이지로 이동

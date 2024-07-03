@@ -11,6 +11,7 @@ import ShopProject.myShopProject.Domain.OrderSearch;
 import ShopProject.myShopProject.Repository.ItemRepository;
 import ShopProject.myShopProject.Repository.MemberRepository;
 import ShopProject.myShopProject.Repository.OrderRepository;
+import ShopProject.myShopProject.web.Form.OrderForm;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,15 @@ public class OrderService {
         //주문 저장
         orderRepository.save(order);
         return order.getId();
+    }
+
+    //장바구니 한번에 결재
+    @Transactional
+    public void deleteCarts(List<OrderForm> carts,Long memberId) {
+        for (OrderForm cartForm : carts) {
+            this.order(memberId, cartForm.getItemId(),cartForm.getCount());
+        }
+
     }
 
     //주문 취소

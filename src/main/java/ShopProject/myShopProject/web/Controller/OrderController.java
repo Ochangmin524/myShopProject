@@ -63,7 +63,7 @@ public class OrderController {
         Long memberId = orderForm.getMemberId();
         Long itemId = orderForm.getItemId();
         Integer count = orderForm.getCount();
-        log.info("count ="+ count);
+
         Item item = itemService.findOne(itemId);
 
         if (bindingResult.hasErrors()) {

@@ -1,4 +1,4 @@
-package ShopProject.myShopProject.web.Form;
+package ShopProject.myShopProject.Domain;
 
 import ShopProject.myShopProject.Domain.Cart;
 import ShopProject.myShopProject.Domain.Item.Item;
